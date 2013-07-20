@@ -12,6 +12,8 @@
  * General Public License for more details.
  */
 
+#include <SDL.h>
+
 #include "video.h"
 #include "common.h"
 #include "image.h"
@@ -82,6 +84,10 @@ void video_snap(const char *path)
 
 /*---------------------------------------------------------------------------*/
 
+static SDL_Window *window;
+
+/*---------------------------------------------------------------------------*/
+
 int video_init(const char *title, const char *icon)
 {
     if (SDL_WasInit(SDL_INIT_VIDEO))
@@ -95,7 +101,7 @@ int video_init(const char *title, const char *icon)
 
     /* This has to happen before mode setting... */
 
-    set_SDL_icon(icon);
+    set_SDL_icon(window, icon);
 
     /* Initialize the video. */
 
@@ -109,9 +115,9 @@ int video_init(const char *title, const char *icon)
 
     /* ...and this has to happen after it. */
 
-    set_EWMH_icon(icon);
+    set_EWMH_icon(window, icon);
 
-    SDL_WM_SetCaption(title, title);
+    SDL_SetWindowTitle(window, title);
 
     return 1;
 }
@@ -133,7 +139,7 @@ int video_mode(int f, int w, int h)
     SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE,       stencil);
     SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, buffers);
     SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, samples);
-    SDL_GL_SetAttribute(SDL_GL_SWAP_CONTROL,       vsync);
+    SDL_GL_SetSwapInterval(vsync);
 
     /* Require 16-bit double buffer with 16-bit depth buffer. */
 
@@ -145,7 +151,15 @@ int video_mode(int f, int w, int h)
 
     /* Try to set the currently specified mode. */
 
-    if (SDL_SetVideoMode(w, h, 0, SDL_OPENGL | (f ? SDL_FULLSCREEN : 0)))
+    window = SDL_CreateWindow(
+        "",
+        SDL_WINDOWPOS_CENTERED,
+        SDL_WINDOWPOS_CENTERED,
+        w, h,
+        SDL_WINDOW_OPENGL | (f ? SDL_WINDOW_FULLSCREEN : 0)
+    );
+
+    if (window != NULL)
     {
         config_set_d(CONFIG_FULLSCREEN, f);
         config_set_d(CONFIG_WIDTH,      w);
@@ -185,8 +199,12 @@ int video_mode(int f, int w, int h)
 
         /* Attempt manual swap control if SDL's is broken. */
 
-        if (vsync && SDL_GL_GetAttribute(SDL_GL_SWAP_CONTROL, &vsync) == -1)
+        /* FIXME: vsync attribute seems to be always supported */
+
+        /*
+        if (vsync && SDL_GetAttribute(SDL_GL_SWAP_CONTROL, &vsync) == -1)
             sync_init();
+        */
 
         /* Set up HMD display if requested. */
 
@@ -255,7 +273,7 @@ void video_swap(void)
 
     snapshot_take();
 
-    SDL_GL_SwapBuffers();
+    SDL_GL_SwapWindow(window);
 
     /* Accumulate time passed and frames rendered. */
 
@@ -303,13 +321,16 @@ void video_set_grab(int w)
     {
         SDL_EventState(SDL_MOUSEMOTION, SDL_IGNORE);
 
-        SDL_WarpMouse(config_get_d(CONFIG_WIDTH)  / 2,
-                      config_get_d(CONFIG_HEIGHT) / 2);
+        SDL_WarpMouseInWindow(
+            window,
+            config_get_d(CONFIG_WIDTH)  / 2,
+            config_get_d(CONFIG_HEIGHT) / 2
+        );
 
         SDL_EventState(SDL_MOUSEMOTION, SDL_ENABLE);
     }
 
-    SDL_WM_GrabInput(SDL_GRAB_ON);
+    SDL_SetWindowGrab(window, SDL_TRUE);
     video_hide_cursor();
 #endif
 
@@ -319,7 +340,7 @@ void video_set_grab(int w)
 void video_clr_grab(void)
 {
 #ifdef NDEBUG
-    SDL_WM_GrabInput(SDL_GRAB_OFF);
+    SDL_SetWindowGrab(window, SDL_FALSE);
     video_show_cursor();
 #endif
     grabbed = 0;
