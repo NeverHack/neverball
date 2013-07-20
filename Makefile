@@ -64,7 +64,7 @@ ALL_CXXFLAGS := -fno-rtti -fno-exceptions $(CXXFLAGS)
 
 # Preprocessor...
 
-SDL_CPPFLAGS := $(shell sdl-config --cflags) -U_GNU_SOURCE
+SDL_CPPFLAGS := $(shell sdl2-config --cflags) -U_GNU_SOURCE
 PNG_CPPFLAGS := $(shell libpng-config --cflags)
 
 ALL_CPPFLAGS := $(SDL_CPPFLAGS) $(PNG_CPPFLAGS) -Ishare
@@ -123,7 +123,7 @@ ALL_CPPFLAGS += $(HMD_CPPFLAGS)
 #------------------------------------------------------------------------------
 # Libraries
 
-SDL_LIBS := $(shell sdl-config --libs)
+SDL_LIBS := $(shell sdl2-config --libs)
 PNG_LIBS := $(shell libpng-config --libs) -lz
 
 ifeq ($(ENABLE_FS),stdio)
@@ -160,7 +160,7 @@ ifeq ($(PLATFORM),mingw)
 	TILT_LIBS :=
 	OGL_LIBS  := -lopengl32
 	X11_LIBS  :=
-	SDL_LIBS  := $(shell sdl-config --static-libs)
+	SDL_LIBS  := $(shell sdl2-config --static-libs)
 endif
 
 ifeq ($(PLATFORM),darwin)
@@ -180,7 +180,7 @@ ifeq ($(PLATFORM),darwin)
 endif
 
 OGG_LIBS := -lvorbisfile -lvorbisenc -lvorbis -logg
-TTF_LIBS := -lSDL_ttf -lfreetype
+TTF_LIBS := -lSDL2_ttf -lfreetype
 
 ALL_LIBS := $(HMD_LIBS) $(TILT_LIBS) $(INTL_LIBS) $(TTF_LIBS) \
 	$(OGG_LIBS) $(SDL_LIBS) $(X11_LIBS) $(OGL_LIBS) $(BASE_LIBS)
