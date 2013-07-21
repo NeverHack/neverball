@@ -86,6 +86,11 @@ void video_snap(const char *path)
 
 static SDL_Window *window;
 
+SDL_Window *video_get_window(void)
+{
+    return window;
+}
+
 /*---------------------------------------------------------------------------*/
 
 int video_init(const char *title, const char *icon)

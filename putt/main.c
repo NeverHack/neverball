@@ -188,11 +188,17 @@ static int loop(void)
             }
             break;
 
+        /* FIXME: SDL_ACTIVEEVENT not available.
+         * http://instead.googlecode.com/svn/trunk/src/sdl-instead/input.c
+         */
+
+        /*
         case SDL_ACTIVEEVENT:
             if (e.active.state == SDL_APPINPUTFOCUS)
                 if (e.active.gain == 0 && video_get_grab())
                     goto_pause(&st_over);
             break;
+        */
 
         case SDL_JOYAXISMOTION:
             st_stick(e.jaxis.axis, JOY_VALUE(e.jaxis.value));
