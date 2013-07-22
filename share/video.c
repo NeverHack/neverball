@@ -346,6 +346,7 @@ void video_set_grab(int w)
         SDL_EventState(SDL_MOUSEMOTION, SDL_ENABLE);
     }
 
+    SDL_SetRelativeMouseMode(SDL_TRUE);
     SDL_SetWindowGrab(window, SDL_TRUE);
     video_hide_cursor();
 #endif
@@ -356,6 +357,7 @@ void video_set_grab(int w)
 void video_clr_grab(void)
 {
 #ifdef NDEBUG
+    SDL_SetRelativeMouseMode(SDL_FALSE);
     SDL_SetWindowGrab(window, SDL_FALSE);
     video_show_cursor();
 #endif
