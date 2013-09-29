@@ -57,7 +57,7 @@ ifeq ($(ENABLE_TILT),wii)
 
 	ALL_CFLAGS := -Wall -std=c99 -pedantic -fms-extensions $(CFLAGS)
 else
-	ALL_CFLAGS := -Wall -ansi -pedantic $(CFLAGS)
+	ALL_CFLAGS := -Wall -std=c99 -pedantic $(CFLAGS)
 endif
 
 ALL_CXXFLAGS := -fno-rtti -fno-exceptions $(CXXFLAGS)
