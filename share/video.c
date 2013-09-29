@@ -21,7 +21,6 @@
 #include "glext.h"
 #include "config.h"
 #include "syswm.h"
-#include "sync.h"
 #include "gui.h"
 #include "hmd.h"
 
@@ -212,15 +211,6 @@ int video_mode(int f, int w, int h)
             SDL_GL_GetAttribute(SDL_GL_MULTISAMPLEBUFFERS, &buffers);
             if (buffers) glEnable(GL_MULTISAMPLE);
         }
-
-        /* Attempt manual swap control if SDL's is broken. */
-
-        /* FIXME: vsync attribute seems to be always supported */
-
-        /*
-        if (vsync && SDL_GetAttribute(SDL_GL_SWAP_CONTROL, &vsync) == -1)
-            sync_init();
-        */
 
         /* Set up HMD display if requested. */
 
