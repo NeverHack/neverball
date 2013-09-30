@@ -128,12 +128,6 @@ static int handle_key_dn(SDL_Event *e)
         else if (config_tst_d(CONFIG_KEY_RIGHT, c))
             st_stick(config_get_d(CONFIG_JOYSTICK_AXIS_X), +1.0f);
 
-        /* FIXME: SDL_EnableUNICODE() is not available */
-
-        /*if (SDL_EnableUNICODE(-1))
-            d = st_keybd(e->key.keysym.unicode, 1);
-        else*/
-
         d = st_keybd(e->key.keysym.sym, 1);
     }
 
@@ -211,6 +205,10 @@ static int loop(void)
             if (e.window.event == SDL_WINDOWEVENT_FOCUS_LOST &&
                 video_get_grab())
                 goto_state(&st_pause);
+            break;
+
+        case SDL_TEXTINPUT:
+            text_input_str(e.text.text);
             break;
 
         case SDL_JOYAXISMOTION:
