@@ -104,10 +104,6 @@ int video_init(const char *title, const char *icon)
         return 0;
     }
 
-    /* This has to happen before mode setting... */
-
-    set_SDL_icon(window, icon);
-
     /* Initialize the video. */
 
     if (!video_mode(config_get_d(CONFIG_FULLSCREEN),
@@ -118,9 +114,7 @@ int video_init(const char *title, const char *icon)
         return 0;
     }
 
-    /* ...and this has to happen after it. */
-
-    set_EWMH_icon(window, icon);
+    set_SDL_icon(window, icon);
 
     SDL_SetWindowTitle(window, title);
 
