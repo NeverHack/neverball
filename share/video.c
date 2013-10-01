@@ -83,8 +83,8 @@ void video_snap(const char *path)
 
 /*---------------------------------------------------------------------------*/
 
-static SDL_Window *window = NULL;
-static SDL_GLContext gl_context;
+static SDL_Window    *window;
+static SDL_GLContext  context;
 
 /*---------------------------------------------------------------------------*/
 
@@ -127,7 +127,16 @@ int video_mode(int f, int w, int h)
     int vsync   = config_get_d(CONFIG_VSYNC)       ? 1 : 0;
     int hmd     = config_get_d(CONFIG_HMD)         ? 1 : 0;
 
+    int X = SDL_WINDOWPOS_UNDEFINED;
+    int Y = SDL_WINDOWPOS_UNDEFINED;
+
     hmd_free();
+
+    if (window)
+    {
+        SDL_GL_DeleteContext(context);
+        SDL_DestroyWindow(window);
+    }
 
     SDL_GL_SetAttribute(SDL_GL_STEREO,             stereo);
     SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE,       stencil);
@@ -143,31 +152,19 @@ int video_mode(int f, int w, int h)
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE,  16);
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
-    /* A window was already created, delete it. */
-
-    if (window != NULL)
-    {
-        SDL_GL_DeleteContext(gl_context);
-        SDL_DestroyWindow(window);
-    }
-
     /* Try to set the currently specified mode. */
 
-    window = SDL_CreateWindow(
-        "",
-        SDL_WINDOWPOS_CENTERED,
-        SDL_WINDOWPOS_CENTERED,
-        w, h,
-        SDL_WINDOW_OPENGL | (f ? SDL_WINDOW_FULLSCREEN : 0)
-    );
+    window = SDL_CreateWindow("", X, Y, w, h,
+                              SDL_WINDOW_OPENGL |
+                              (f ? SDL_WINDOW_FULLSCREEN : 0));
 
-    if (window != NULL)
+    if (window)
     {
         config_set_d(CONFIG_FULLSCREEN, f);
         config_set_d(CONFIG_WIDTH,      w);
         config_set_d(CONFIG_HEIGHT,     h);
 
-        gl_context = SDL_GL_CreateContext(window);
+        context = SDL_GL_CreateContext(window);
 
         if (!glext_init())
             return 0;
@@ -316,11 +313,9 @@ void video_set_grab(int w)
     {
         SDL_EventState(SDL_MOUSEMOTION, SDL_IGNORE);
 
-        SDL_WarpMouseInWindow(
-            window,
-            config_get_d(CONFIG_WIDTH)  / 2,
-            config_get_d(CONFIG_HEIGHT) / 2
-        );
+        SDL_WarpMouseInWindow(window,
+                              config_get_d(CONFIG_WIDTH)  / 2,
+                              config_get_d(CONFIG_HEIGHT) / 2);
 
         SDL_EventState(SDL_MOUSEMOTION, SDL_ENABLE);
     }
