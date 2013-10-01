@@ -226,17 +226,12 @@ static int dirty = 0;
 
 static void config_key(const char *s, int i)
 {
-    int c;
+    SDL_Keycode c = SDL_GetKeyFromName(s);
 
-    config_set_d(i, option_d[i].def);
-
-    /* FIXME: SDLK_LAST isn't defined */
-    for (c = 0; c < 255; c++)
-        if (strcmp(s, SDL_GetKeyName((SDL_Keycode) c)) == 0)
-        {
-            config_set_d(i, c);
-            break;
-        }
+    if (c == SDLK_UNKNOWN)
+        config_set_d(i, option_d[i].def);
+    else
+        config_set_d(i, c);
 }
 
 /*---------------------------------------------------------------------------*/
