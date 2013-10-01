@@ -32,6 +32,7 @@
 #include "hmd.h"
 #include "fs.h"
 #include "common.h"
+#include "text.h"
 
 #include "st_conf.h"
 #include "st_title.h"
