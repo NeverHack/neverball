@@ -213,6 +213,7 @@ static int loop(void)
             case SDL_WINDOWEVENT_MOVED:
                 if (config_get_d(CONFIG_DISPLAY) != video_display())
                     config_set_d(CONFIG_DISPLAY, video_display());
+                break;
             }
             break;
 
