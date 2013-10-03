@@ -32,6 +32,33 @@ static struct state *st_back;
 
 /*---------------------------------------------------------------------------*/
 
+struct mode
+{
+    int w;
+    int h;
+};
+
+static const struct mode modes[] = {
+    { 2560, 1440 },
+    { 1920, 1200 },
+    { 1920, 1080 },
+    { 1680, 1050 },
+    { 1600, 1200 },
+    { 1600, 900 },
+    { 1440, 900 },
+    { 1366, 768 },
+    { 1280, 1024 },
+    { 1280, 800 },
+    { 1280, 720 },
+    { 1024, 768 },
+    { 800, 600 },
+    { 640, 480 },
+    { 480, 320 },
+    { 320, 240 }
+};
+
+/*---------------------------------------------------------------------------*/
+
 enum
 {
     RESOL_BACK = 1,
@@ -41,8 +68,6 @@ enum
 static int resol_action(int tok, int val)
 {
     int r = 1;
-
-    SDL_DisplayMode mode;
 
     audio_play("snd/menu.ogg", 1.0f);
 
@@ -54,10 +79,10 @@ static int resol_action(int tok, int val)
         break;
 
     case RESOL_MODE:
-        SDL_GetDisplayMode(video_display(), val, &mode);
-
         goto_state(&st_null);
-        r = video_mode(config_get_d(CONFIG_FULLSCREEN), mode.w, mode.h);
+        r = video_mode(config_get_d(CONFIG_FULLSCREEN),
+                       modes[val].w,
+                       modes[val].h);
         goto_state(&st_resol);
         break;
     }
@@ -67,7 +92,7 @@ static int resol_action(int tok, int val)
 
 static int resol_gui(void)
 {
-    int id, jd;
+    int id, jd, kd;
 
     if ((id = gui_vstack(0)))
     {
@@ -81,9 +106,11 @@ static int resol_gui(void)
         gui_space(id);
 
         {
-            SDL_DisplayMode mode;
-            int display = video_display();
-            int i, j, n = SDL_GetNumDisplayModes(display);
+            const int W = config_get_d(CONFIG_WIDTH);
+            const int H = config_get_d(CONFIG_HEIGHT);
+
+            int i, j, n = ARRAYSIZE(modes);
+
             char buff[sizeof ("1234567890 x 1234567890")] = "";
 
             for (i = 0; i < n; i += 4)
@@ -96,9 +123,10 @@ static int resol_gui(void)
 
                         if (m < n)
                         {
-                            SDL_GetDisplayMode(display, m, &mode);
-                            sprintf(buff, "%d x %d", mode.w, mode.h);
-                            gui_state(jd, buff, GUI_SML, RESOL_MODE, m);
+                            sprintf(buff, "%d x %d", modes[m].w, modes[m].h);
+                            kd = gui_state(jd, buff, GUI_SML, RESOL_MODE, m);
+                            gui_set_hilite(kd, (modes[m].w == W &&
+                                                modes[m].h == H));
                         }
                         else
                         {
