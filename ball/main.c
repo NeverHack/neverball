@@ -232,6 +232,10 @@ static int loop(void)
         case SDL_JOYBUTTONUP:
             d = st_buttn(e.jbutton.button, 0);
             break;
+
+        case SDL_MOUSEWHEEL:
+            st_wheel(e.wheel.x, e.wheel.y);
+            break;
         }
     }
 
