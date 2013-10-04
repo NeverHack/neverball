@@ -20,9 +20,11 @@
 #include "vec3.h"
 #include "glext.h"
 #include "config.h"
-#include "syswm.h"
 #include "gui.h"
 #include "hmd.h"
+
+extern const char TITLE[];
+extern const char ICON[];
 
 /*---------------------------------------------------------------------------*/
 
@@ -86,6 +88,26 @@ void video_snap(const char *path)
 static SDL_Window    *window;
 static SDL_GLContext  context;
 
+static void set_window_title(const char *title)
+{
+    SDL_SetWindowTitle(window, title);
+}
+
+static void set_window_icon(const char *filename)
+{
+#if !defined(__APPLE__) && !defined(_WIN32)
+    SDL_Surface *icon;
+
+    if ((icon = load_surface(filename)))
+    {
+        SDL_SetWindowIcon(window, icon);
+        free(icon->pixels);
+        SDL_FreeSurface(icon);
+    }
+#endif
+    return;
+}
+
 int video_display(void)
 {
     if (window)
@@ -96,30 +118,15 @@ int video_display(void)
 
 /*---------------------------------------------------------------------------*/
 
-int video_init(const char *title, const char *icon)
+int video_init(void)
 {
-    if (SDL_WasInit(SDL_INIT_VIDEO))
-        SDL_QuitSubSystem(SDL_INIT_VIDEO);
-
-    if (SDL_InitSubSystem(SDL_INIT_VIDEO) == -1)
-    {
-        fprintf(stderr, "%s\n", SDL_GetError());
-        return 0;
-    }
-
-    /* Initialize the video. */
-
     if (!video_mode(config_get_d(CONFIG_FULLSCREEN),
                     config_get_d(CONFIG_WIDTH),
                     config_get_d(CONFIG_HEIGHT)))
     {
-        fprintf(stderr, "%s\n", SDL_GetError());
+        fprintf(stderr, "Failure to create window (%s)\n", SDL_GetError());
         return 0;
     }
-
-    set_SDL_icon(window, icon);
-
-    SDL_SetWindowTitle(window, title);
 
     return 1;
 }
@@ -170,6 +177,9 @@ int video_mode(int f, int w, int h)
 
     if (window)
     {
+        set_window_title(TITLE);
+        set_window_icon(ICON);
+
         SDL_GetWindowSize(window, &w, &h);
 
         config_set_d(CONFIG_DISPLAY,    video_display());

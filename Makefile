@@ -242,7 +242,6 @@ BALL_OBJS := \
 	share/audio.o       \
 	share/text.o        \
 	share/common.o      \
-	share/syswm.o       \
 	share/list.o        \
 	share/queue.o       \
 	share/cmd.o         \
@@ -310,7 +309,6 @@ PUTT_OBJS := \
 	share/gui.o         \
 	share/text.o        \
 	share/common.o      \
-	share/syswm.o       \
 	share/list.o        \
 	share/fs_common.o   \
 	share/fs_png.o      \

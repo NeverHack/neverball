@@ -494,7 +494,7 @@ int main(int argc, char *argv[])
 
     /* Initialize video. */
 
-    if (!video_init(TITLE, ICON))
+    if (!video_init())
         return 1;
 
     init_state(&st_null);

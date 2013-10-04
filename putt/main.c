@@ -300,7 +300,7 @@ int main(int argc, char *argv[])
 
         /* Initialize the video. */
 
-        if (video_init(TITLE, ICON))
+        if (video_init())
         {
             int t1, t0 = SDL_GetTicks();
 
