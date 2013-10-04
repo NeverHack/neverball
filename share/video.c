@@ -159,7 +159,6 @@ int video_mode(int f, int w, int h)
     SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE,       stencil);
     SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, buffers);
     SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, samples);
-    SDL_GL_SetSwapInterval(vsync);
 
     /* Require 16-bit double buffer with 16-bit depth buffer. */
 
@@ -188,6 +187,8 @@ int video_mode(int f, int w, int h)
         config_set_d(CONFIG_HEIGHT,     h);
 
         context = SDL_GL_CreateContext(window);
+
+        SDL_GL_SetSwapInterval(vsync);
 
         if (!glext_init())
             return 0;
