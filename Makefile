@@ -64,7 +64,7 @@ ALL_CXXFLAGS := -fno-rtti -fno-exceptions $(CXXFLAGS)
 
 # Preprocessor...
 
-SDL_CPPFLAGS := $(shell sdl2-config --cflags) -U_GNU_SOURCE
+SDL_CPPFLAGS := $(shell sdl2-config --cflags)
 PNG_CPPFLAGS := $(shell libpng-config --cflags)
 
 ALL_CPPFLAGS := $(SDL_CPPFLAGS) $(PNG_CPPFLAGS) -Ishare
