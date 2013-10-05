@@ -16,8 +16,6 @@
 
 #include <string.h>
 
-#include <SDL.h>
-
 #include "gui.h"
 #include "geom.h"
 #include "part.h"
