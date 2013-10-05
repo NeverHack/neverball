@@ -116,23 +116,6 @@ int video_display(void)
         return -1;
 }
 
-/*---------------------------------------------------------------------------*/
-
-int video_init(void)
-{
-    if (!video_mode(config_get_d(CONFIG_FULLSCREEN),
-                    config_get_d(CONFIG_WIDTH),
-                    config_get_d(CONFIG_HEIGHT)))
-    {
-        fprintf(stderr, "Failure to create window (%s)\n", SDL_GetError());
-        return 0;
-    }
-
-    return 1;
-}
-
-/*---------------------------------------------------------------------------*/
-
 int video_mode(int f, int w, int h)
 {
     int stereo  = config_get_d(CONFIG_STEREO)      ? 1 : 0;
@@ -268,6 +251,19 @@ int video_mode(int f, int w, int h)
     /* If THAT mode failed, punt. */
 
     return 0;
+}
+
+int video_init(void)
+{
+    if (!video_mode(config_get_d(CONFIG_FULLSCREEN),
+                    config_get_d(CONFIG_WIDTH),
+                    config_get_d(CONFIG_HEIGHT)))
+    {
+        fprintf(stderr, "Failure to create window (%s)\n", SDL_GetError());
+        return 0;
+    }
+
+    return 1;
 }
 
 /*---------------------------------------------------------------------------*/
